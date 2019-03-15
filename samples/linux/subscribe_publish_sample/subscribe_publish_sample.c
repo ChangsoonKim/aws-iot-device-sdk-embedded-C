@@ -18,9 +18,8 @@
  * @brief simple MQTT publish and subscribe on the same topic
  *
  * This example takes the parameters from the aws_iot_config.h file and establishes a connection to the AWS IoT MQTT Platform.
- * It subscribes and publishes to the same topic - "sdkTest/sub"
- *
- * If all the certs are correct, you should see the messages received by the application in a loop.
+ * It subscribes and publishes to the same topic - "my/topic"
+ 8 * If all the certs are correct, you should see the messages received by the application in a loop.
  *
  * The application takes in the certificate path, host name , port and the number of times the publish should happen.
  *
@@ -202,7 +201,7 @@ int main(int argc, char **argv) {
 	}
 
 	IOT_INFO("Subscribing...");
-	rc = aws_iot_mqtt_subscribe(&client, "sdkTest/sub", 11, QOS0, iot_subscribe_callback_handler, NULL);
+	rc = aws_iot_mqtt_subscribe(&client, "my/topic", 8, QOS0, iot_subscribe_callback_handler, NULL);
 	if(SUCCESS != rc) {
 		IOT_ERROR("Error subscribing : %d ", rc);
 		return rc;
@@ -234,9 +233,9 @@ int main(int argc, char **argv) {
 
 		IOT_INFO("-->sleep");
 		sleep(1);
-		sprintf(cPayload, "%s : %d ", "hello from SDK QOS0", i++);
+		sprintf(cPayload, "{\"%s\" : %d }", "hello from SDK QOS0", i++);
 		paramsQOS0.payloadLen = strlen(cPayload);
-		rc = aws_iot_mqtt_publish(&client, "sdkTest/sub", 11, &paramsQOS0);
+		rc = aws_iot_mqtt_publish(&client, "my/topic", 8, &paramsQOS0);
 		if(publishCount > 0) {
 			publishCount--;
 		}
@@ -245,9 +244,9 @@ int main(int argc, char **argv) {
 			break;
 		}
 
-		sprintf(cPayload, "%s : %d ", "hello from SDK QOS1", i++);
+		sprintf(cPayload, "{\"%s\" : %d }", "hello from SDK QOS1", i++);
 		paramsQOS1.payloadLen = strlen(cPayload);
-		rc = aws_iot_mqtt_publish(&client, "sdkTest/sub", 11, &paramsQOS1);
+		rc = aws_iot_mqtt_publish(&client, "my/topic", 8, &paramsQOS1);
 		if (rc == MQTT_REQUEST_TIMEOUT_ERROR) {
 			IOT_WARN("QOS1 publish ack not received.\n");
 			rc = SUCCESS;
